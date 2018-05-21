@@ -1,7 +1,7 @@
 #!/bin/sh
 lock() {
     #i3lock -c 222222
-    i3lock -i ~/.config/i3/scripts/lockscreen/color_dots.png -t
+    i3lock -i ~/.config/i3/scripts/lockscreen/Arch.png -tf
 }
 
 case "$1" in

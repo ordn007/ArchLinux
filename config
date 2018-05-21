@@ -19,7 +19,10 @@ gaps inner 10
 gaps outer 5
 
 # start a terminal
-bindsym $mod+Return exec i3-sensible-terminal
+#bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+shift+Return exec xfce4-terminal
+bindsym $mod+Return exec urxvt
+
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -117,8 +120,8 @@ bindsym $mod+Shift+Right move right
 
 # Customize workspace variable names
 set $ws1 "1:  Editor"
-set $ws2 "2: Browser"
-set $ws3 "3:"
+set $ws2 "2:  Browser"
+set $ws3 "3:  "
 set $ws4 "4:"
 set $ws5 "5: "
 set $ws6 "6:"
@@ -151,6 +154,10 @@ bindsym $mod+Shift+8 move container to workspace $ws8
 bindsym $mod+Shift+9 move container to workspace $ws9
 bindsym $mod+Shift+0 move container to workspace $ws10
 
+# No border
+#new_window none
+#new_window pixel 1
+for_window [class="^.*"] border pixel 1
 
 ################### ASSIGN ######################
 
@@ -304,13 +311,13 @@ bar {
 
     #status_command    i3blocks
     #status_command  i3blocks -c ~/.config/i3/i3blocks.conf
+    #status_command  i3blocks -c ~/.config/i3/i3blocks
 
     ## OPTION 3 : conky ##
     ### https://i3wm.org/docs/user-contributed/conky-i3bar
     
     status_command ~/.config/i3/.conkyi3
     #status_command ~/.config/i3/.start-conky-i3statusbar.sh
-    #status_command conky -c ~/.config/i3/conky-i3statusbar
 
 
     ## BAR FONT ##
@@ -343,8 +350,10 @@ colors {
 #		urgent_workspace   $urgent-bg-color   $urgent-bg-color   $text-color
 #	}
 
-    #mode dock
-    #tray_output primary
+    mode dock
+    tray_output primary
+    verbose yes
+    hidden_state show
 }
 
 
@@ -382,9 +391,13 @@ exec_always --no-startup-id feh --bg-scale ~/Downloads/Image/DYm1aqo.jpg
 #exec_always --no-startup-id feh --bg-scale ~/Downloads/Image/blueSkull.jpg
 
 
-# Custom Key Binds
-bindsym $mod+shift+x exec i3lock
+##################### Custom Key Binds #####################
+
+
 #bindsym $mod+shift+n exec neofetch
+bindsym $mod+shift+x exec i3lock
+bindsym Print exec xfe4-screenshooter
+
 
 # Press $mod+o followed by either f, t, Escape or Return to launch firefox,
 # thunderbird or return to the default mode, respectively.
@@ -424,23 +437,23 @@ mode "$mode_system" {
 #
 #
 #    # Pulse Audio controls
-#    bindsym XF86AudioRaiseVolume    exec --no-startup-id pactl set-sink-volume 0 +5%    #increase sound volume
-#    bindsym XF86AudioLowerVolume    exec --no-startup-id pactl set-sink-volume 0 -5%    #decrease sound volume
-#    bindsym XF86AudioMute           exec --no-startup-id pactl set-sink-mute 0 toggle   #mute sound
+     bindsym XF86AudioRaiseVolume    exec --no-startup-id pactl set-sink-volume 0 +5%    #increase sound volume
+     bindsym XF86AudioLowerVolume    exec --no-startup-id pactl set-sink-volume 0 -5%    #decrease sound volume
+     bindsym XF86AudioMute           exec --no-startup-id pactl set-sink-mute 0 toggle   #mute sound
 #
 #    # Media player controls
-#    bindsym XF86AudioPlay   exec playerctl play
-#    bindsym XF86AudioPause  exec playerctl pause
-#    bindsym XF86AudioNext   exec playerctl next
-#    bindsym XF86AudioPrev   exec playerctl previous
+     bindsym XF86AudioPlay   exec playerctl play
+     bindsym XF86AudioPause  exec playerctl pause
+     bindsym XF86AudioNext   exec playerctl next
+     bindsym XF86AudioPrev   exec playerctl previous
 #
 #    # Sreen brightness controls
-#    bindsym XF86MonBrightnessUp 	exec light -A 10 # increase screen brightness
-#    bindsym XF86MonBrightnessDown	exec light -U 10 # decrease screen brightness
+     bindsym XF86MonBrightnessUp 	exec light -A 10 # increase screen brightness
+     bindsym XF86MonBrightnessDown	exec light -U 10 # decrease screen brightness
 #
 #
 #    # Touchpad controls
-#    bindsym XF86TouchpadToggle exec /some/path/toggletouchpad.sh # toggle touchpad
+     bindsym XF86TouchpadToggle exec /some/path/toggletouchpad.sh # toggle touchpad
 #
 #
 #
@@ -455,4 +468,4 @@ mode "$mode_system" {
 ###################       C O M P T O N      ##############################
 ###########################################################################
 #if you want transparency on non-focused windows
-exec_always compton --config ~/.config/i3/compton.conf
+exec_always compton --config ~/.config/i3/compton1.conf
