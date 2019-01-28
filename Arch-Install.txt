@@ -1,0 +1,114 @@
+#   ____  ____  _____  _____ ___    __			  	____	  ____	  ____	_		 _				 _			 .. ___    __ .. ___    __	_____
+#  /    \|  _ \|  _  \|----- ||\\   ||			 		/	\	 |	_ \ /			\ |			 |				 ||			 || ||\\   || || ||\\   || /
+# |      | |_) | | }  |_____ || \\  ||			 	 / _ \ | |_) |				|	____ |   ___   ||			 || || \\  || || || \\  || \____
+# |      |  _ <|  -   |----- ||  \\ ||			  /	/_\	\|  _ <|				|	---- |				 ||			 || ||  \\ || || ||  \\ ||			\
+#  \____/\_| \_\_____/|_____ ||   \\||			_/			 \_| \_ \ ____/	|      |				 \\_____ || ||   \\|| || ||   \\|| _____/
+
+
+# File originally by Orden Aitchedji
+# Website: https://Linkedn.com/in/oaitchedji
+# Email: oaitchedji@mines.edu
+# Github: https://github.com/ordn007
+
+#################################################################################################
+#################                      Traditional Bios Setup                   #################
+#################################################################################################
+
+
+$ ls /sys/firmware/efi/efivars																							## If it returns Nothing then Good to go.(Not UEFI Bios)
+> ls: cannot access '/sys/firmware/efivars' : No such file or directory			## This error is GOOD, you can continue.
+
+
+##### INTERNET ######
+															## Ethernet cable requires no setup
+$ wifi-menu 									## Setup wireless config
+$ ping -c 3 google.com				## Check wifi is working
+$ timedatectl set-ntp true		## Make sure Clock is all good
+
+##### Partitions #####
+
+$ lsblk										## List all block devices
+													## Locate drive to install on (usually "sda or sdb" Mines is "nvme0n1")
+
+$ fdisk /dev/nvme0n1			## open up the drive to partition
+	$ p 										### Print things in the partition
+	$ d											### Delete partition
+	$ n 										### New partition
+
+	[image]									### Create "boot" partition (size: +200M)
+	[image]									### Create "swap" partition (size: +12G)
+	[image]									###	Create "root" partition (size: +72G)
+	[image]									### Create "home" partition (rest of space)
+
+	$ w 										### Write changes (WILL WIPE EVERYTHING)
+
+
+##### File Systems ######
+
+$ mkfs.ext4 /dev/nvme0n1p1						### Make file system for boot partition
+$ mkfs.ext4 /dev/nvme0n1p3						### Make file system for root partition
+$ mkfs.ext4 /dev/nvme0n1p4						### Make file system for home partition
+
+$ mkswap /dev/nvme0n1p2
+$ swapon /dev/nvme0n1p2
+$ mount /dev/nvme0n1p3 /mnt						### Mount root partition onto /mnt
+$ mkdir /mnt/home
+$ mkdir /mnt/boot
+$ mount /dev/nvme0n1p1 /mnt/boot
+$ mount /dev/nvme0n1p4 /mnt/home
+
+$ lsblk																### Check correct mounted file systems
+	[image]
+
+##### INSTAL ARCH ######
+
+$ vim /etc/pacman.d/mirrorlist				### [Optional] Add mirror close to you | delete unecessary ones.
+
+$ pacstrap /mnt base base-devel wpa_supplicant wpa_actiond dialog iw
+
+$ genfstab /mnt																### Notice drives to mount on Start-up
+$ genfstab -U /mnt >> /mnt/etc/fstab					### Append output with UUID on fstab file.
+$ arch-chroot /mnt														### go to actually arch installing (NO LONGER IN USB)
+
+$ pacman -S vim																### Vim text editor
+$ pacman -S networkmanager
+$ systemctl enable NetworkManager							### Automatically start NetworkManager on login
+$ pacman -S grup															### Install boot loader
+$ grub-install --target=i386-pc /dev/nvme0n1
+$ grub-mkconfig -o /boot/grub/grub.cfg
+
+$ passwd																			### Set root password
+
+$ vim /etc/locale.gen													### Generate Locale (Uncomment en_US.UTF && en_US ISO)
+$ echo LANG=en_US.UTF-8												### Set your countries Language
+$ ln -sf /usr/share/zoneinfo/America/Denver		### Set your timezone
+$ echo 'yourHostName' >> /etc/hostname				### Create a Hostname
+$ exit
+
+$ umount -R /mnt
+
+$ reboot
+
+
+#################################################################################################
+#################                           POST INSTALL                        #################
+#################################################################################################
+
+##### Connect to wifi ######
+
+$ nmcli device wifi
+$ nmcli device wifi connect 'SSDI' password 'wifi-password'
+
+
+##### Install useful packages ######
+
+$ pacman -S git jshon multilib-devel wget
+$ pacman -S make pkg-config fakeroot expac
+$ pacman -S xorg-server xorg-xinit mesa
+$ pacman -S xf86-video-intel xf86-video-vesa
+$ pacman -S i3-gaps i3status rxvt-unicode dmenu								# i3 windows manager
+
+
+###### Optional fonts ######
+
+ttf-linux-libertine ttf-inconsolata
